@@ -4,13 +4,59 @@
 
 var express = require('express')
 var app = express();
+
+var NodeFileParser = require('node-file-parser');
+
+
 var path = require('path');
+var exec = require('child_process').exec;
+
+var Converter = require("csvtojson").Converter;
+var converter = new Converter({});
+
+app.get('/control', function(req, res) {
+  if (req.query.type == 'on') {
+    exec('gpio mode 0 out');
+  } else {
+    exec('gpio mode 0 in');
+  }
+  res.end()
+});
+
+app.get('/status', function(req, res) {
+  exec('gpio read 0', function (error, stdout, stderr) {
+    res.end(stdout);
+  });
+});
+
+app.get('/data', function(req, res) {
+  var loader = require('csv-load-sync');
+  var csv = loader('data.csv');
+
+  var data = [];
+  for (var value of csv) {
+    data.push({date:value.ts,t:value.t});
+  }
+  res.send(data);
+  res.end();
+
+  return;
+  var content = require("fs").createReadStream("./data.csv").pipe(converter);
+
+  res.send(content);
+  return;
+  var file = NodeFileParser.link('./data.csv','csv');
+  var content = file.read().getContent();
+
+  res.send(content)
+
+})
 
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+app.listen(8000, function () {
+  console.log('Temp Control app listening on port 8000!')
+  return;
 })
-

@@ -1,0 +1,25 @@
+{
+  "name": "raspberry_temp_control",
+  "version": "1.0.0",
+  "description": "",
+  "main": "start.js",
+  "dependencies": {
+    "csv-load-sync": "^1.0.0",
+    "express": "^4.14.0",
+    "node-file-parser": "^2.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csepi83/raspberry_temp_control.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/csepi83/raspberry_temp_control/issues"
+  },
+  "homepage": "https://github.com/csepi83/raspberry_temp_control#readme"
+}
