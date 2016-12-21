@@ -24,21 +24,21 @@ app.get('/control', function(req, res) {
 });
 
 app.get('/status', function(req, res) {
-  exec('gpio read 0', function (error, stdout, stderr) {
+  exec('gpio readall|grep "GPIO. 2"|cut -c27-29', function (error, stdout, stderr) {
     res.end(stdout);
   });
 });
 
 app.get('/data', function(req, res) {
+  var loader = require('csv-load-sync');
+  var csv = loader('data.csv');
 
-  var content = require("fs").createReadStream("./data.csv").pipe(converter);
-
-  res.send(content);
-  return;
-  var file = NodeFileParser.link('./data.csv','csv');
-  var content = file.read().getContent();
-
-  res.send(content)
+  var data = [];
+  for (var value of csv) {
+    data.push({date:value.ts,t:value.t});
+  }
+  res.send(data);
+  res.end();
 
 })
 
