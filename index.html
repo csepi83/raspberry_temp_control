@@ -1,24 +1,29 @@
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-<button class="control-button" data-type="on">On</button>
-<button class="control-button" data-type="off">Off</button>
-<br>
-<br>
-<button id="change">Change View Window</button>
-<div id="chart_div"></div>
+<h2>Temp control</h2>
+<button class="control-button btn btn-danger" data-type="on">On</button>
+<button class="control-button btn btn-success" data-type="off">Off</button>
 
+<!--<button id="change">Change View Window</button>-->
+
+Status: <span id="status"></span>
+
+<div id="chart_div"></div>
 
 <script>
 
   google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
-
+    var chart,data,options;
     function drawChart() {
 
-      var data = new google.visualization.DataTable();
+      data = new google.visualization.DataTable();
       data.addColumn('datetime', 'Time of Day');
       data.addColumn('number', 'Motivation Level');
 
+/*
       data.addRows([
         [new Date(2015, 0, 1, 0), 5],    [new Date(2015, 0, 1, 0, 30), 5.1],
         [new Date(2015, 0, 1, 1), 6.2],  [new Date(2015, 0, 1, 2), 7],
@@ -38,8 +43,8 @@
         [new Date(2015, 0, 2, 5), 6],    [new Date(2015, 0, 2, 6), 7.8],
         [new Date(2015, 0, 2, 7), 8.2],  [new Date(2015, 0, 2, 8), 9],
       ]);
-
-      var options = {
+*/
+      options = {
         width: 900,
         height: 500,
         legend: {position: 'none'},
@@ -48,10 +53,10 @@
           width: '85%'
         },
         hAxis: {
-          viewWindow: {
-            min: new Date(2014, 11, 31, 18),
-            max: new Date(2015, 0, 3, 1)
-          },
+          //viewWindow: {
+        //    min: new Date(2016, 11, 31, 18),
+          //  max: new Date(2016, 12, 31, 1)
+          //},
           gridlines: {
             count: -1,
             units: {
@@ -68,11 +73,11 @@
         }
       };
 
-      var chart = new google.visualization.LineChart(
+       chart = new google.visualization.LineChart(
         document.getElementById('chart_div'));
 
-      chart.draw(data, options);
-
+      //chart.draw(data, options);
+/*
       var button = document.getElementById('change');
       var isChanged = false;
 
@@ -88,21 +93,46 @@
         }
         chart.draw(data, options);
       };
+*/
+      fetchStatus();
+      fetchData();
     }
 
-  const fetchData = function(event) {
+  const control = function(event) {
     console.log('ehh');
     const type = this.getAttribute('data-type');
     return fetch('/control?type='+type)
       //.then((response) => response.json()).then((response) => {
       .then((response) => {
         console.log(response);
+        fetchStatus();
       })
       .catch((error) => { console.log('Fck it, something is wrong in the ether!'); });
   }
 
+  const fetchData = function(event) {
+    return fetch('/data')
+      .then((response) => response.json()).then((response) => {
+      //.then((response) => {
+
+         for (var value of response) {
+           //data.addRows(new Date(response.date),response.t);
+           data.addRow([new Date(parseInt(value.date+'000')),parseFloat(value.t)])
+         }
+        chart.draw(data, options);
+      })
+      .catch((error) => { console.log('Fck it, something is wrong in the ether!'); console.log(error)});
+  }
+
+  const fetchStatus = () => {
+    return fetch('/status')
+      .then((response) => response.text()).then((response) => {
+        document.querySelector('#status').innerHTML = response;
+      })
+  }
+
 document.querySelectorAll('.control-button').forEach(function(el) {
-  el.addEventListener('click', fetchData);
+  el.addEventListener('click', control);
 });
 //document.querySelector('.off').addEventListener('click', fetchData);
 
