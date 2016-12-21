@@ -7,6 +7,11 @@ var app = express();
 
 var NodeFileParser = require('node-file-parser');
 
+var minutes = 0.1, the_interval = minutes * 60 * 1000;
+
+setInterval(function () {
+    console.log('second passed', new Date().getTime());
+}, the_interval);
 
 var path = require('path');
 var exec = require('child_process').exec;
@@ -14,6 +19,20 @@ var exec = require('child_process').exec;
 var Converter = require("csvtojson").Converter;
 var converter = new Converter({});
 
+var NoSQL = require('nosql');
+var db = NoSQL.load('./data.nosql');
+
+db.insert({name : 'Peter'});
+
+
+db.find().make(function(filter) {
+    filter.callback(function() {
+        console.log(err, response);
+    });
+});
+
+
+return;
 app.get('/control', function(req, res) {
   if (req.query.type == 'on') {
     exec('gpio mode 0 out');
