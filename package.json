@@ -6,7 +6,8 @@
   "dependencies": {
     "csv-load-sync": "^1.0.0",
     "express": "^4.14.0",
-    "node-file-parser": "^2.2.2"
+    "node-file-parser": "^2.2.2",
+    "nosql": "^5.0.0"
   },
   "devDependencies": {},
   "scripts": {
