@@ -27,12 +27,12 @@ db.insert({name : 'Peter'});
 
 db.find().make(function(filter) {
     filter.callback(function() {
-        console.log(err, response);
+//        console.log(err, response);
     });
 });
 
 
-return;
+//return;
 app.get('/control', function(req, res) {
   if (req.query.type == 'on') {
     exec('gpio mode 0 out');
